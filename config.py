@@ -56,7 +56,7 @@ def get_config():
 def get_token():
     if is_prod:
         token = os.getenv("TOKEN")
-    else
+    else:
         config = get_config()
         token = config['bot'][0]['token']
         # Exit bot if token is not defined
