@@ -5,6 +5,7 @@ import sys
 import asyncio
 from discord.ext import commands
 from discord import Status
+from flask import Flask
 
 ###########################
 # Setup Bot Configuration #
@@ -24,6 +25,8 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
+
+frontend = Flask(__name__)
 
 
 ###############
@@ -46,6 +49,19 @@ async def on_command_error(ctx, error):
     traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
+###############
+# Render Home #
+###############
+
+@frontend.route("/")
+def hello_world():
+    return "<p>Hello, World!</p>"
+
+
+#################
+# Start Process #
+#################
+
 # Load cogs
 async def load():
     for extension in extensions:
@@ -56,8 +72,8 @@ async def load():
 
 # Start bot
 async def main():
+    frontend.run()
     await load()
     await bot.start(TOKEN)
-
 
 asyncio.run(main())
