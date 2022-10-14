@@ -2,6 +2,9 @@ import json
 import os
 import sys
 
+# Check if we are on Heroku
+is_prod = os.environ.get('IS_HEROKU', None)
+
 ############################
 # Read and Write Functions #
 ############################
@@ -51,14 +54,16 @@ def get_config():
 
 
 def get_token():
-    config = get_config()
-    token = config['bot'][0]['token']
-    # Exit bot if token is not defined
-    if len(token)<=0:
-        print("[Error] Please define a token in config.json")
-        sys.exit()
-    else:
-        return token
+    if is_prod:
+        token = os.getenv("TOKEN")
+    else
+        config = get_config()
+        token = config['bot'][0]['token']
+        # Exit bot if token is not defined
+        if len(token)<=0:
+            print("[Error] Please define a token in config.json")
+            sys.exit()
+    return token
 
 
 def get_command_prefix():
