@@ -1,4 +1,5 @@
 import discord
+from personal.discord-obs.cogs.media_grabber import MediaGrabber
 import config
 import traceback
 import sys
@@ -20,9 +21,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = discord.Client(command_prefix=COMMAND_PREFIX, intents=intents)
-
-# Define bot extensions
-extensions = []
 
 
 ###############
@@ -47,9 +45,7 @@ async def on_command_error(ctx, error):
 
 # Load available cogs and extensions
 if __name__ == '__main__':
-    for extension in extensions:
-        try:
-            bot.load_extension(extension)
-        except Exception as error:
-            print('{} cannot be loaded. [{}]'.format(extension,error))
+    # Add cogs
+    bot.add_cog(MediaGrabber(bot))
+
     bot.run(TOKEN)
