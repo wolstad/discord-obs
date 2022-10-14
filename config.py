@@ -2,8 +2,8 @@ import json
 import os
 import sys
 
-# Check if we are on Heroku
-is_prod = os.environ.get('IS_HEROKU', None)
+# Check if we are on Heroku by seeing if TOKEN exists
+is_prod = 'TOKEN' in os.environ
 
 ############################
 # Read and Write Functions #
