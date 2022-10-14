@@ -6,14 +6,18 @@ class MediaGrabber(commands.Cog, name='Media Grabber'):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("MediaGrabber loaded.")
+
     # Check all messages for images
-    @commands.cog.listener
-    async def on_message(message):
+    @commands.Cog.listener("on_message")
+    async def on_message(self, message):
         # Check if in image channel
         if message.channel.id == config.get_image_channel():
             # Message contains an image
-            if message.attachement:
-                await message.channel.send(content=message.attachments[0].url)
+            if message.attachments:
+                # do something cool
 
 
     ##################
@@ -30,5 +34,5 @@ class MediaGrabber(commands.Cog, name='Media Grabber'):
         await ctx.message.delete()
 
 
-def setup(bot):
-    bot.add_cog(MediaGrabber(bot))
+async def setup(bot):
+    await bot.add_cog(MediaGrabber(bot))

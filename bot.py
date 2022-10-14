@@ -1,8 +1,8 @@
 import discord
-from personal.discord-obs.cogs.media_grabber import MediaGrabber
 import config
 import traceback
 import sys
+import asyncio
 from discord.ext import commands
 from discord import Status
 
@@ -16,11 +16,14 @@ config.initialize()
 TOKEN = config.get_token()
 COMMAND_PREFIX = config.get_command_prefix()
 
+# Define bot extensions
+extensions = ['cogs.mediagrabber']
+
 # Define Intents
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = discord.Client(command_prefix=COMMAND_PREFIX, intents=intents)
+bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 
 
 ###############
@@ -43,9 +46,18 @@ async def on_command_error(ctx, error):
     traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
-# Load available cogs and extensions
-if __name__ == '__main__':
-    # Add cogs
-    bot.add_cog(MediaGrabber(bot))
+# Load cogs
+async def load():
+    for extension in extensions:
+        try:
+            await bot.load_extension(extension)
+        except Exception as error:
+            print('{} cannot be loaded. [{}]'.format(extension,error))
 
-    bot.run(TOKEN)
+# Start bot
+async def main():
+    await load()
+    await bot.start(TOKEN)
+
+
+asyncio.run(main())
