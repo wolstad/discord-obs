@@ -19,8 +19,6 @@ def initialize():
             'image_channel': None,
         })
 
-        config['users'] = []
-
         update(config)
 
 
