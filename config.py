@@ -78,7 +78,7 @@ def get_ip():
         if len(ip)<=0:
             print("[Error] Please define a websocket IP in config.json")
             sys.exit()
-    return ip
+    return str(ip)
 
 def get_port():
     if is_prod:
@@ -90,7 +90,7 @@ def get_port():
         if len(port)<=0:
             print("[Error] Please define a websocket port in config.json")
             sys.exit()
-    return port
+    return str(port)
 
 def get_password():
     if is_prod:
@@ -102,7 +102,7 @@ def get_password():
         if len(password)<=0:
             print("[Error] Please define a websocket password in config.json")
             sys.exit()
-    return password
+    return str(password)
 
 def get_command_prefix():
     config = get_config()

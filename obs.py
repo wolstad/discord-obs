@@ -17,3 +17,5 @@ async def connect():
     ret = await ws.call(request) # Perform the request
     if ret.ok(): # Check if the request succeeded
         print("Connection to OBS Websocket successful!")
+    else:
+        print("Connection to OBS Websocket failed")
