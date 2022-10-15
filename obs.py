@@ -2,19 +2,18 @@ from ipaddress import ip_address
 import simpleobsws
 import config
 
-config.initialize()
-
 IP = config.get_ip()
 PORT = config.get_port()
 PASSWORD = config.get_password()
 
 # Set up OBS websocket
+global ws
 parameters = simpleobsws.IdentificationParameters(ignoreNonFatalRequestChecks = False)
-ws = simpleobsws.WebSocketClient(url = f"ws://{IP}:{PORT}", password = PASSWORD, identification_parameters = parameters)
 
 # Connect to websocket
 async def connect():
-    print(f"Attempting to connect to OBS Websocket: ws://{config.get_ip()}:{config.get_port()}")
+    ws = simpleobsws.WebSocketClient(url = f"ws://{IP}:{PORT}", password = PASSWORD, identification_parameters = parameters)
+    print(f"Attempting to connect to OBS Websocket: ws://{IP}:{PORT}")
     await ws.connect() 
     await ws.wait_until_identified()
 
