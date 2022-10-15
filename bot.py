@@ -3,7 +3,7 @@ import config
 import traceback
 import sys
 import asyncio
-from frontend import FrontEnd
+import frontend
 from discord.ext import commands
 from discord import Status
 
@@ -25,7 +25,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
-frontend = FrontEnd()
 
 ###############
 # Bot Events #
@@ -60,7 +59,7 @@ async def load():
 
 # Start bot
 async def main():
-    await frontend.flask.run()
+    await frontend.page.run()
     await load()
     await bot.start(TOKEN)
 

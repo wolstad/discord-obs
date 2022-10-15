@@ -1,2 +1,2 @@
 worker: python3 bot.py
-web: gunicorn frontend:flask
+web: gunicorn frontend:page
