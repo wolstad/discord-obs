@@ -54,7 +54,7 @@ async def on_command_error(ctx, error):
 ###############
 
 @frontend.route("/")
-def hello_world():
+async def hello_world():
     return "<p>Hello, World!</p>"
 
 
@@ -72,7 +72,7 @@ async def load():
 
 # Start bot
 async def main():
-    frontend.run()
+    await frontend.run()
     await load()
     await bot.start(TOKEN)
 
