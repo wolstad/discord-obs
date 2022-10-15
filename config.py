@@ -2,9 +2,6 @@ import json
 import os
 import sys
 
-# Check if we are on Heroku by seeing if TOKEN exists
-is_prod = 'TOKEN' in os.environ
-
 ############################
 # Read and Write Functions #
 ############################
@@ -57,51 +54,39 @@ def get_config():
 
 
 def get_token():
-    if is_prod:
-        token = os.getenv("TOKEN")
-    else:
-        config = get_config()
-        token = config['bot'][0]['token']
-        # Exit bot if token is not defined
-        if len(token)<=0:
-            print("[Error] Please define a token in config.json")
-            sys.exit()
+    config = get_config()
+    token = config['bot'][0]['token']
+    # Exit bot if token is not defined
+    if len(token)<=0:
+        print("[Error] Please define a token in config.json")
+        sys.exit()
     return token
 
 def get_ip():
-    if is_prod:
-        ip = os.getenv("IP")
-    else:
-        config = get_config()
-        ip = config['bot'][0]['ip']
-        # Exit bot if token is not defined
-        if len(ip)<=0:
-            print("[Error] Please define a websocket IP in config.json")
-            sys.exit()
+    config = get_config()
+    ip = config['bot'][0]['ip']
+    # Exit bot if token is not defined
+    if len(ip)<=0:
+        print("[Error] Please define a websocket IP in config.json")
+        sys.exit()
     return str(ip)
 
 def get_port():
-    if is_prod:
-        port = os.getenv("PORT")
-    else:
-        config = get_config()
-        port = config['bot'][0]['port']
-        # Exit bot if token is not defined
-        if len(port)<=0:
-            print("[Error] Please define a websocket port in config.json")
-            sys.exit()
+    config = get_config()
+    port = config['bot'][0]['port']
+    # Exit bot if token is not defined
+    if len(port)<=0:
+        print("[Error] Please define a websocket port in config.json")
+        sys.exit()
     return str(port)
 
 def get_password():
-    if is_prod:
-        password = os.getenv("PASS")
-    else:
-        config = get_config()
-        password = config['bot'][0]['pass']
-        # Exit bot if token is not defined
-        if len(password)<=0:
-            print("[Error] Please define a websocket password in config.json")
-            sys.exit()
+    config = get_config()
+    password = config['bot'][0]['pass']
+    # Exit bot if token is not defined
+    if len(password)<=0:
+        print("[Error] Please define a websocket password in config.json")
+        sys.exit()
     return str(password)
 
 def get_command_prefix():
