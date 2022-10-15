@@ -1,6 +1,5 @@
 import discord
 import config
-import frontend
 from discord.ext import commands
 
 class MediaGrabber(commands.Cog, name='Media Grabber'):

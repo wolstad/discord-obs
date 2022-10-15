@@ -66,8 +66,8 @@ async def load():
 
 # Start bot
 async def main():
+    await obs.connect()
     await load()
     await bot.start(TOKEN)
-    await obs.connect()
 
 asyncio.run(main())
