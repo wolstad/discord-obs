@@ -3,5 +3,5 @@ from flask import Flask
 page = Flask(__name__)
 
 @page.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+def pong(text):
+    return "<p>{}</p>".format(text)
