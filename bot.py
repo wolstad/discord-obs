@@ -3,7 +3,6 @@ import config
 import traceback
 import sys
 import asyncio
-import frontend
 from discord.ext import commands
 from discord import Status
 
@@ -61,6 +60,5 @@ async def load():
 async def main():
     await load()
     await bot.start(TOKEN)
-    frontend.page.run()
 
 asyncio.run(main())
