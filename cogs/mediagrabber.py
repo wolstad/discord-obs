@@ -1,5 +1,6 @@
 import discord
 import config
+import frontend
 from discord.ext import commands
 
 class MediaGrabber(commands.Cog, name='Media Grabber'):
@@ -15,10 +16,10 @@ class MediaGrabber(commands.Cog, name='Media Grabber'):
     async def on_message(self, message):
         # Check if in image channel
         if message.channel.id == config.get_image_channel():
+            print(message.content)
             # Message contains an image
-            if message.attachments:
+            # if message.attachments:
                 # do something cool
-
 
     ##################
     # Admin Commands #
