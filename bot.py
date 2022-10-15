@@ -59,7 +59,7 @@ async def load():
 
 # Start bot
 async def main():
-    await frontend.page.run()
+    frontend.page.run()
     await load()
     await bot.start(TOKEN)
 
