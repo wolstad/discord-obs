@@ -3,6 +3,7 @@ import config
 import traceback
 import sys
 import asyncio
+import obs
 from discord.ext import commands
 from discord import Status
 
@@ -44,6 +45,13 @@ async def on_command_error(ctx, error):
     print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
     traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
+# Disconnect bot
+@commands.command()
+async def disconnect(self, ctx):
+    await obs.ws.disconnect()
+    await ctx.bot.logout()
+    sys.exit()
+
 #################
 # Start Process #
 #################
@@ -60,5 +68,6 @@ async def load():
 async def main():
     await load()
     await bot.start(TOKEN)
+    await obs.connect()
 
 asyncio.run(main())
