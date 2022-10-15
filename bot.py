@@ -59,8 +59,8 @@ async def load():
 
 # Start bot
 async def main():
-    frontend.page.run()
     await load()
     await bot.start(TOKEN)
+    frontend.page.run()
 
 asyncio.run(main())
