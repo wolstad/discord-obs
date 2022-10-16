@@ -46,11 +46,9 @@ async def on_command_error(ctx, error):
     traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 # Disconnect bot
-@commands.command()
-async def disconnect(self, ctx):
-    await obs.ws.disconnect()
-    await ctx.bot.logout()
-    sys.exit()
+# @commands.command()
+# async def disconnect(self, ctx):
+#     sys.exit()
 
 #################
 # Start Process #

@@ -1,5 +1,6 @@
 import discord
 import config
+import obs
 from discord.ext import commands
 
 class MediaGrabber(commands.Cog, name='Media Grabber'):
@@ -12,13 +13,10 @@ class MediaGrabber(commands.Cog, name='Media Grabber'):
 
     # Check all messages for images
     @commands.Cog.listener("on_message")
-    async def on_message(self, message):
+    async def img_display(self, message):
         # Check if in image channel
-        if message.channel.id == config.get_image_channel():
-            print(message.content)
-            # Message contains an image
-            # if message.attachments:
-                # do something cool
+        if message.channel.id == config.get_image_channel() and message.attachments:
+            await obs.img_toggle(message.attachments[0].url)
 
     ##################
     # Admin Commands #
