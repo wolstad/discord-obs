@@ -15,10 +15,13 @@ class OBS():
         self.ws = simpleobsws.WebSocketClient(url = f"ws://{ip}:{port}", password = password, identification_parameters = parameters)
 
         # OBS State
-        self.BROWSER_SOURCE = browser_source
-        self.browser_visible = False
+        self.obs_state = {
+            "browser_source": browser_source,
+            "browser_visible": False
+        }
 
         return self
+
 
     # Connect to websocket
     async def connect(self):
@@ -42,22 +45,22 @@ class OBS():
     async def initialize_vars(self):
         print("Initializing OBS Variables.")
 
-        request = simpleobsws.Request('GetInputSettings', {'inputName': self.BROWSER_SOURCE})
+        check_browser_vis = simpleobsws.Request('GetInputSettings', {'inputName': self.obs_state["browser_source"]})
 
-        ret = await self.ws.call(request) 
+        ret = await self.ws.call(check_browser_vis) 
         if not ret.ok():
             print("[Error] Function failed to execute.")
             return False
         
         if ret.responseData['inputSettings']['url']:
-            self.browser_visible = True
+            self.obs_state["browser_visible"] = True
 
-        print(f"Browser Visible: {self.browser_visible}")
+        print(f"OBS State: {self.obs_state}")
 
 
     async def img_toggle(self, img_src):
         # Disable cat
-        if self.browser_visible:
+        if self.obs_state["browser_visible"]:
             print("Disabling cat.")
             request = simpleobsws.Request('SetInputSettings', {'inputName': 'Testy', 'inputSettings': {'url': ''}})
         else:
@@ -69,4 +72,4 @@ class OBS():
             print("[Error] Function failed to execute.")
             return False
 
-        self.browser_visible = not self.browser_visible
+        self.obs_state["browser_visible"] = not self.obs_state["browser_visible"]
