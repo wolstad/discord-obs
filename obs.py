@@ -1,10 +1,16 @@
 from ipaddress import ip_address
 from aiohttp import request
+from timer import Timer
 import simpleobsws
 import config
 
 
 class OBS():
+
+    ###################
+    # Setup Functions #
+    ###################
+
     @classmethod
     async def create(self, ip, port, password, browser_source):
         # Websocket Config
@@ -29,47 +35,52 @@ class OBS():
         await self.ws.connect() 
         await self.ws.wait_until_identified()
 
-        # Get version to test connection
-        request = simpleobsws.Request('GetVersion')
-
-        ret = await self.ws.call(request) # Perform the request
-        if ret.ok(): # Check if the request succeeded
-            print("Connection to OBS Websocket successful!")
-        else:
-            print("[Error] Connection to OBS Websocket failed")
-            return False
-
         await self.initialize_vars()
 
 
     async def initialize_vars(self):
         print("Initializing OBS Variables.")
 
-        check_browser_vis = simpleobsws.Request('GetInputSettings', {'inputName': self.obs_state["browser_source"]})
-
-        ret = await self.ws.call(check_browser_vis) 
-        if not ret.ok():
-            print("[Error] Function failed to execute.")
-            return False
+        # Browser Source
+        check_browser_vis = await self.make_request(simpleobsws.Request('GetInputSettings', {'inputName': self.obs_state["browser_source"]}))
         
-        if ret.responseData['inputSettings']['url']:
+        print(check_browser_vis.responseData)
+
+        if check_browser_vis.responseData['inputSettings']['url']:
             self.obs_state["browser_visible"] = True
 
         print(f"OBS State: {self.obs_state}")
 
 
-    async def img_toggle(self, img_src):
-        # Disable cat
+    ##################
+    # Manipulate OBS #
+    ##################
+
+    # Clear the browser source
+    async def clear_browser_source(self):
+        request = await self.make_request(simpleobsws.Request('SetInputSettings', {'inputName': self.obs_state["browser_source"], 'inputSettings': {'url': ''}}))
+        self.obs_state["browser_visible"] = False
+        return request.ok()
+
+    # Set an image for a set amount of time
+    async def img_trigger(self, image_src, time=5):
+        # Enabling image
         if self.obs_state["browser_visible"]:
-            print("Disabling cat.")
-            request = simpleobsws.Request('SetInputSettings', {'inputName': 'Testy', 'inputSettings': {'url': ''}})
+            return False # Media already being displayed
         else:
-            print("Enabling cat.")
-            request = simpleobsws.Request('SetInputSettings', {'inputName': 'Testy', 'inputSettings': {'url': img_src}})
+            print(f"Enabling OBS image for: {time}")
+            request = await self.make_request(simpleobsws.Request('SetInputSettings', {'inputName': self.obs_state["browser_source"], 'inputSettings': {'url': image_src}}))
+            self.obs_state["browser_visible"] = True
+            timer = Timer(time, self.clear_browser_source)
 
-        ret = await self.ws.call(request) 
+
+    ###########
+    # Helpers #
+    ###########
+
+    async def make_request(self, req):
+        ret = await self.ws.call(req) 
         if not ret.ok():
-            print("[Error] Function failed to execute.")
+            print(f"[Error] OBS Request Failed: {req}")
             return False
-
-        self.obs_state["browser_visible"] = not self.obs_state["browser_visible"]
+        return ret

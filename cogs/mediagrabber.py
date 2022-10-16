@@ -16,7 +16,7 @@ class MediaGrabber(commands.Cog, name='Media Grabber'):
     async def img_display(self, message):
         # Check if in image channel
         if message.channel.id == self.config.get_image_channel() and message.attachments:
-            await self.obs.img_toggle(message.attachments[0].url)
+            await self.obs.img_trigger(message.attachments[0].url)
 
     ##################
     # Admin Commands #
