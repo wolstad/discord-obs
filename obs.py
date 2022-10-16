@@ -3,71 +3,70 @@ from aiohttp import request
 import simpleobsws
 import config
 
-# Set up OBS websocket
-IP = config.get_ip()
-PORT = config.get_port()
-PASSWORD = config.get_password()
 
-ws = None
-parameters = simpleobsws.IdentificationParameters(ignoreNonFatalRequestChecks = False)
+class OBS():
+    @classmethod
+    async def create(self, ip, port, password, browser_source):
+        # Websocket Config
+        parameters = simpleobsws.IdentificationParameters(ignoreNonFatalRequestChecks = False)
+        self.ip = ip
+        self.port = port
+        self.password = password
+        self.ws = simpleobsws.WebSocketClient(url = f"ws://{ip}:{port}", password = password, identification_parameters = parameters)
 
-# Media variables
-BROWSER_SOURCE = 'Testy'
-browser_visible = False
+        # OBS State
+        self.BROWSER_SOURCE = browser_source
+        self.browser_visible = False
 
-# Connect to websocket
-async def connect():
-    global ws
-    ws = simpleobsws.WebSocketClient(url = f"ws://{IP}:{PORT}", password = PASSWORD, identification_parameters = parameters)
-    print(f"Attempting to connect to OBS Websocket: ws://{IP}:{PORT}")
-    await ws.connect() 
-    await ws.wait_until_identified()
+        return self
 
-    # Get version to test connection
-    request = simpleobsws.Request('GetVersion')
+    # Connect to websocket
+    async def connect(self):
+        print(f"Attempting to connect to OBS Websocket: ws://{self.ip}:{self.port}")
+        await self.ws.connect() 
+        await self.ws.wait_until_identified()
 
-    ret = await ws.call(request) # Perform the request
-    if ret.ok(): # Check if the request succeeded
-        print("Connection to OBS Websocket successful!")
-    else:
-        print("[Error] Connection to OBS Websocket failed")
-        return False
+        # Get version to test connection
+        request = simpleobsws.Request('GetVersion')
 
-    await initialize_vars()
+        ret = await self.ws.call(request) # Perform the request
+        if ret.ok(): # Check if the request succeeded
+            print("Connection to OBS Websocket successful!")
+        else:
+            print("[Error] Connection to OBS Websocket failed")
+            return False
 
-
-async def initialize_vars():
-    print("Initializing OBS Variables.")
-
-    global browser_visible
-
-    request = simpleobsws.Request('GetInputSettings', {'inputName': BROWSER_SOURCE})
-
-    ret = await ws.call(request) 
-    if not ret.ok():
-        print("[Error] Function failed to execute.")
-        return False
-    
-    if ret.responseData['inputSettings']['url']:
-        browser_visible = True
-
-    print(f"Browser Visible: {browser_visible}")
+        await self.initialize_vars()
 
 
-async def img_toggle(img_src):
-    global browser_visible
+    async def initialize_vars(self):
+        print("Initializing OBS Variables.")
 
-    # Disable cat
-    if browser_visible:
-        print("Disabling cat.")
-        request = simpleobsws.Request('SetInputSettings', {'inputName': 'Testy', 'inputSettings': {'url': ''}})
-    else:
-        print("Enabling cat.")
-        request = simpleobsws.Request('SetInputSettings', {'inputName': 'Testy', 'inputSettings': {'url': img_src}})
+        request = simpleobsws.Request('GetInputSettings', {'inputName': self.BROWSER_SOURCE})
 
-    ret = await ws.call(request) 
-    if not ret.ok():
-        print("[Error] Function failed to execute.")
-        return False
+        ret = await self.ws.call(request) 
+        if not ret.ok():
+            print("[Error] Function failed to execute.")
+            return False
+        
+        if ret.responseData['inputSettings']['url']:
+            self.browser_visible = True
 
-    browser_visible = not browser_visible
+        print(f"Browser Visible: {self.browser_visible}")
+
+
+    async def img_toggle(self, img_src):
+        # Disable cat
+        if self.browser_visible:
+            print("Disabling cat.")
+            request = simpleobsws.Request('SetInputSettings', {'inputName': 'Testy', 'inputSettings': {'url': ''}})
+        else:
+            print("Enabling cat.")
+            request = simpleobsws.Request('SetInputSettings', {'inputName': 'Testy', 'inputSettings': {'url': img_src}})
+
+        ret = await self.ws.call(request) 
+        if not ret.ok():
+            print("[Error] Function failed to execute.")
+            return False
+
+        self.browser_visible = not self.browser_visible
