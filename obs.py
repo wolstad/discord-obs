@@ -59,24 +59,31 @@ class OBS():
     # Clear the browser source
     async def clear_browser_source(self):
         request = await self.make_request(simpleobsws.Request('SetInputSettings', {'inputName': self.obs_state["browser_source"], 'inputSettings': {'url': ''}}))
-        self.obs_state["browser_visible"] = False
+        if request.ok():
+            self.obs_state["browser_visible"] = False
+            print("Browser source cleared.")
         return request.ok()
 
     # Set an image for a set amount of time
-    async def img_trigger(self, image_src, time=5):
+    async def img_trigger(self, image_src, time):
         # Enabling image
         if self.obs_state["browser_visible"]:
             return False # Media already being displayed
         else:
             print(f"Enabling OBS image for: {time}")
+
             request = await self.make_request(simpleobsws.Request('SetInputSettings', {'inputName': self.obs_state["browser_source"], 'inputSettings': {'url': image_src}}))
-            self.obs_state["browser_visible"] = True
+            if request.ok():
+                self.obs_state["browser_visible"] = True
             timer = Timer(time, self.clear_browser_source)
 
 
     ###########
     # Helpers #
     ###########
+
+    def get_browser_status(self):
+        return self.obs_state["browser_visible"]
 
     async def make_request(self, req):
         ret = await self.ws.call(req) 
