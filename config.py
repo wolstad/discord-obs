@@ -10,21 +10,37 @@ class Config():
 
     # Create config file if it does not exist
     def initialize(self):
+        # Define config
+        config = {}
+        config['bot'] = {
+            'token': '',
+            'command_prefix': '.',
+            'image_channel': None
+        }
+        config['obs'] = {
+            'ip': '',
+            'port': '',
+            'pass': '',
+            'browser_source': ''           
+        }
+
+        # Check if file exists
         exists = os.path.isfile('config.json')
-        if not exists:
-            config = {}
-            config['bot'] = [{
-                'token': '',
-                'ip': '',
-                'port': '',
-                'pass': '',
-                'command_prefix': '.',
-                'image_channel': None,
-                'browser_source': '',
-            }]
 
-            self.update(config)
+        # Check for existing values in config
+        if exists:
+            with open('config.json') as json_file:
+                config_f = json.load(json_file)
 
+                for outer_key in config.keys():
+                    for inner_key in config[outer_key].keys():     
+                        # Check if key currently exists and set it
+                        try:
+                            config[outer_key][inner_key] = config_f[outer_key][inner_key]
+                        except KeyError:
+                            pass # Do nothing
+                        
+        self.update(config)
 
     # Update config file
     def update(self, config):
@@ -36,12 +52,10 @@ class Config():
     # Set Functions #
     ##################
 
-
     def set_image_channel(self, channel):
         config = self.get_config()
-        config['bot'][0]['image_channel'] = channel.id
+        config['bot']['image_channel'] = channel.id
         self.update(config)
-
 
     ####################
     # Access Functions #
@@ -56,7 +70,7 @@ class Config():
 
     def get_token(self):
         config = self.get_config()
-        token = config['bot'][0]['token']
+        token = config['bot']['token']
         # Exit bot if token is not defined
         if len(token)<=0:
             print("[Error] Please define a token in config.json")
@@ -65,7 +79,7 @@ class Config():
 
     def get_ip(self):
         config = self.get_config()
-        ip = config['bot'][0]['ip']
+        ip = config['obs']['ip']
         # Exit bot if token is not defined
         if len(ip)<=0:
             print("[Error] Please define a websocket IP in config.json")
@@ -74,7 +88,7 @@ class Config():
 
     def get_port(self):
         config = self.get_config()
-        port = config['bot'][0]['port']
+        port = config['obs']['port']
         # Exit bot if token is not defined
         if len(port)<=0:
             print("[Error] Please define a websocket port in config.json")
@@ -83,7 +97,7 @@ class Config():
 
     def get_password(self):
         config = self.get_config()
-        password = config['bot'][0]['pass']
+        password = config['obs']['pass']
         # Exit bot if token is not defined
         if len(password)<=0:
             print("[Error] Please define a websocket password in config.json")
@@ -92,13 +106,12 @@ class Config():
 
     def get_command_prefix(self):
         config = self.get_config()
-        return config['bot'][0]['command_prefix']
-
+        return config['bot']['command_prefix']
 
     def get_image_channel(self):
         config = self.get_config()
-        return config['bot'][0]['image_channel']
+        return config['bot']['image_channel']
 
     def get_browser_source(self):
         config = self.get_config()
-        return config['bot'][0]['browser_source']
+        return config['obs']['browser_source']
