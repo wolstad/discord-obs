@@ -5,7 +5,7 @@ from obs import OBS
 
 config = Config()
 obs = OBS()
-bot = Bot()
+discord_bot = Bot()
 
 async def start():
     # Create Config
@@ -16,7 +16,7 @@ async def start():
     await obs.connect()
 
     # Connect bot
-    await bot.create(config, obs)
-    await bot.connect_bot()
+    await discord_bot.create(config, obs)
+    await discord_bot.connect_bot()
 
 asyncio.run(start())
